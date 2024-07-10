@@ -387,6 +387,12 @@ class FFmpegInfosParser:
             elif not self._inside_file_metadata and line.startswith("  Metadata:"):
                 # enter "  Metadata:" group
                 self._inside_file_metadata = True
+            elif line.lstrip().startswith("Side data:"):
+                # parse side data for rotation
+                rotation_match = re.search(r"rotation of (-?\d+\.?\d*) degrees", line)
+                if rotation_match:
+                    rotation = float(rotation_match.group(1))
+                    self.result["video_rotation"] = rotation
             elif line.startswith("  Duration:"):
                 # exit "  Metadata:" group
                 self._inside_file_metadata = False
